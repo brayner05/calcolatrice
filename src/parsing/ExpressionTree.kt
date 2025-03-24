@@ -1,17 +1,15 @@
 package parsing
 
+import math.factorial
 import tokenization.TokenType
 
 data class ExpressionTree(val root: ParseTreeNode) {
-    fun evaluate(): ExpressionResult {
-        var node = root
-        return evaluate(root)
-    }
+    fun evaluate() = evaluate(root)
 
     private fun evaluate(node: ParseTreeNode): ExpressionResult {
         return when (node) {
             is BinaryOperatorNode -> evaluateBinary(node)
-            is UnaryOperatorNode -> throw Error()
+            is UnaryOperatorNode -> evaluateUnary(node)
             is TerminalNode -> ExpressionResult(node.value.value as Double)
             else -> throw Error()
         }
@@ -26,6 +24,17 @@ data class ExpressionTree(val root: ParseTreeNode) {
             TokenType.Minus -> ExpressionResult(left - right)
             TokenType.Asterisk -> ExpressionResult(left * right)
             TokenType.Slash -> ExpressionResult(left / right)
+            else -> throw Error()
+        }
+    }
+
+    private fun evaluateUnary(node: UnaryOperatorNode): ExpressionResult {
+        when (node.operator) {
+            TokenType.Factorial -> {
+                val numberValue = evaluate(node.operand).value as Double
+                val result = factorial(numberValue.toInt())
+                return ExpressionResult(result.toDouble())
+            }
             else -> throw Error()
         }
     }

@@ -72,6 +72,7 @@ class Lexer (private val _source: String) {
             '^' -> appendToken(TokenType.Caret)
             '(' -> appendToken(TokenType.LeftParenthesis)
             ')' -> appendToken(TokenType.RightParenthesis)
+            '!' -> appendToken(TokenType.Factorial)
             else -> {
                 if (ch.isDigit()) {
                     appendNumberToken()

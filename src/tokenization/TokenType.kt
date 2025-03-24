@@ -3,7 +3,7 @@ package tokenization
 enum class TokenType {
     // Operators
     Plus, Minus, Asterisk, Slash,
-    Caret, Function,
+    Caret, Factorial,
 
     // Brackets
     LeftParenthesis, RightParenthesis,

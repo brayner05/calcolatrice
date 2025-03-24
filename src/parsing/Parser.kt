@@ -22,6 +22,8 @@ class Parser(private val tokenStream: TokenStream) {
         get() = (_position < tokenStream.size &&
                 tokenStream[_position].type != TokenType.EndOfFile)
 
+    private var _lastFactor: ParseTreeNode? = null
+
     companion object {
         private val _zero = TerminalNode(
             Token (
@@ -145,20 +147,30 @@ class Parser(private val tokenStream: TokenStream) {
             throw Error("Expected an expression.")
         }
 
-        val nextToken = advance()
-        val terminal: ParseTreeNode = TerminalNode(nextToken)
+        val currentToken = advance()
+        _lastFactor = TerminalNode(currentToken)
 
         // Parse a nested expression if the next token is a '('
-        if (nextToken.type == TokenType.LeftParenthesis) {
-            return parseParentheses()
+        if (currentToken.type == TokenType.LeftParenthesis) {
+            _lastFactor = parseParentheses()
         }
 
         // Parse a negative number if the next token is '-'
-        if (nextToken.type == TokenType.Minus) {
-            return parseUnaryNegation()
+        if (currentToken.type == TokenType.Minus) {
+            _lastFactor = parseUnaryNegation()
         }
 
-        return terminal
+        if (_hasNext && peek()!!.type == TokenType.Factorial) {
+            _lastFactor = parseFactorial()
+        }
+
+        return _lastFactor!!
+    }
+
+    private fun parseFactorial(): UnaryOperatorNode {
+        advance()
+        val operand = _lastFactor ?: throw Error("Expected expression.")
+        return UnaryOperatorNode(TokenType.Factorial, operand)
     }
 
     /**
