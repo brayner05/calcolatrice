@@ -1,15 +1,24 @@
 package tokenization
 
 enum class TokenType {
-    // Operators
-    Plus, Minus, Asterisk, Slash,
-    Caret, Factorial,
+    // Arithmetic Operators
+    Plus, Minus, Asterisk, Slash, Caret,
+    Factorial,
+
+    // Logical Operators
+    Conjunction, Disjunction, LogicalNegation,
+    Implication, BiCondition,
+
+    // Equality Operators
+    EqualEqual, LessThan, LessOrEqual,
+    GreaterThan, GreaterOrEqual, BangEqual,
+
 
     // Brackets
     LeftParenthesis, RightParenthesis,
 
-    // Types
-    Number, Vector,
+    // Literals
+    Number, Boolean,
 
     // Miscellaneous
     EndOfFile

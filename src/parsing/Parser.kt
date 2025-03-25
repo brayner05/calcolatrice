@@ -150,14 +150,12 @@ class Parser(private val tokenStream: TokenStream) {
         val currentToken = advance()
         _lastFactor = TerminalNode(currentToken)
 
-        // Parse a nested expression if the next token is a '('
-        if (currentToken.type == TokenType.LeftParenthesis) {
-            _lastFactor = parseParentheses()
-        }
-
-        // Parse a negative number if the next token is '-'
-        if (currentToken.type == TokenType.Minus) {
-            _lastFactor = parseUnaryNegation()
+        _lastFactor = when (currentToken.type) {
+            TokenType.LeftParenthesis -> parseParentheses()
+            TokenType.Minus -> parseNegative()
+            TokenType.LogicalNegation -> parseLogicalNegation()
+            TokenType.Number, TokenType.Boolean -> TerminalNode(currentToken)
+            else -> throw Error("Unexpected token: ${currentToken.value}")
         }
 
         if (_hasNext && peek()!!.type == TokenType.Factorial) {
@@ -181,17 +179,19 @@ class Parser(private val tokenStream: TokenStream) {
      *
      * @return A subtree representing the negation of an expression.
      */
-    private fun parseUnaryNegation(): BinaryOperatorNode {
-        val rightHand = parseFactor()
-
-        val terminal = BinaryOperatorNode(
+    private fun parseNegative(): BinaryOperatorNode =
+        BinaryOperatorNode(
             operator = TokenType.Asterisk,
             leftOperand = _negativeOne,
-            rightOperand = rightHand
+            rightOperand = parseFactor()
         )
 
-        return terminal
-    }
+
+    private fun parseLogicalNegation(): UnaryOperatorNode =
+        UnaryOperatorNode(
+            operator = TokenType.LogicalNegation,
+            operand = parseFactor()
+        )
 
     /**
      * Parse an expression inside parentheses.
