@@ -76,7 +76,10 @@ class Parser(private val tokenStream: TokenStream) {
      * @return `true` if `type` can be used to separate two terms, otherwise `false`.
      */
     private fun isTermSeparator(type: TokenType) =
-        type == TokenType.Plus || type == TokenType.Minus
+        (type == TokenType.Plus ||
+            type == TokenType.Minus ||
+            type == TokenType.Conjunction ||
+            type ==TokenType.Disjunction)
 
     /**
      * Whether a type of token is a valid factor separator. That is, `type`
@@ -120,7 +123,7 @@ class Parser(private val tokenStream: TokenStream) {
     private fun parseTerm(): ParseTreeNode {
         var left = parseFactor()
 
-        if (left is TerminalNode && left.value.type != TokenType.Number) {
+        if (left is TerminalNode && left.value.type !in TokenType.literals) {
             throw Error("Invalid left operand: ${left.value.value}")
         }
 
@@ -128,7 +131,7 @@ class Parser(private val tokenStream: TokenStream) {
             val operator = advance()
             val right = parseFactor()
 
-            if (right is TerminalNode && right.value.type != TokenType.Number) {
+            if (right is TerminalNode && right.value.type !in TokenType.literals) {
                 throw Error("Invalid right operand: ${right.value.value}")
             }
 

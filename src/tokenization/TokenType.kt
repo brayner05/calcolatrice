@@ -21,5 +21,29 @@ enum class TokenType {
     Number, Boolean,
 
     // Miscellaneous
-    EndOfFile
+    EndOfFile;
+
+    companion object {
+        val literals = setOf(
+            Number,
+            Boolean
+        )
+
+        val logicalOperators = setOf(
+            Conjunction,
+            Disjunction,
+            LogicalNegation,
+            Implication,
+            BiCondition
+        )
+
+        val mathOperators = setOf(
+            Plus,
+            Minus,
+            Asterisk,
+            Slash,
+            Caret,
+            Factorial
+        )
+    }
 }
